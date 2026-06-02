@@ -1,0 +1,20 @@
+---
+name: Formatting
+
+on:
+  push:
+    branches:
+      - main
+  pull_request:
+
+jobs:
+  formatting:
+    name: Formatting
+    runs-on: ubuntu-slim
+
+    steps:
+      - uses: actions/checkout@v6
+      - uses: DeterminateSystems/nix-installer-action@v22
+
+      - name: Format
+        run: nix develop --command treefmt --fail-on-change

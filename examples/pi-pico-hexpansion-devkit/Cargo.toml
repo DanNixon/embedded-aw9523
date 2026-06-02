@@ -1,0 +1,38 @@
+[package]
+name = "pi-pico-with-hexpansion"
+version = "0.1.0"
+edition = "2024"
+license = "MIT"
+
+[[bin]]
+name = "pi-pico-with-hexpansion"
+test = false
+bench = false
+
+[dependencies]
+cortex-m-rt = "0.7.3"
+defmt = "1.0.1"
+defmt-rtt = "1.0.0"
+embassy-embedded-hal = { version = "0.6.0", features = ["defmt"] }
+embassy-executor = { version = "0.10.0", features = ["platform-cortex-m", "executor-thread", "defmt"] }
+embassy-rp = { version = "0.10.0", features = ["defmt", "unstable-pac", "time-driver", "critical-section-impl", "rp2040"] }
+embassy-sync = "0.8.0"
+embassy-time = { version = "0.5.0", features = ["defmt"] }
+embedded-aw9523 = { path = "../.." }
+panic-probe = { version = "1.0.0", features = ["print-defmt"] }
+portable-atomic = { version = "1.10.0", default-features = false, features = ["critical-section"] }
+static_cell = "2.1.0"
+embedded-hal-async = "1.0.0"
+
+[profile.release]
+debug = 2
+lto = true
+opt-level = 'z'
+
+[profile.dev]
+debug = 2
+lto = true
+opt-level = "z"
+
+[lints.rust]
+unused_crate_dependencies = "deny"

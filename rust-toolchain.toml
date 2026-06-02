@@ -1,0 +1,11 @@
+[toolchain]
+channel = "1.96"
+components = [
+  "rust-src",
+  "rustfmt",
+  "clippy",
+  "rust-analyzer",
+]
+targets = [
+  "thumbv6m-none-eabi",
+]

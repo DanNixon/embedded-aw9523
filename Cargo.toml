@@ -1,0 +1,19 @@
+[package]
+name = "embedded-aw9523"
+version = "0.1.0"
+license = "MIT"
+edition = "2024"
+homepage = "https://github.com/DanNixon/eio-aw9523"
+repository = "https://github.com/DanNixon/eio-aw9523"
+readme = "README.md"
+description = "An embedded-hal first async AW9523 driver."
+
+[dependencies]
+defmt = "1.1.0"
+embassy-futures = "0.1.2"
+embedded-hal = { version = "1.0.0", features = ["defmt-03"] }
+embedded-hal-async = "1.0.0"
+num_enum = { version = "0.7.6", default-features = false }
+
+[lints.rust]
+unused_crate_dependencies = "deny"
