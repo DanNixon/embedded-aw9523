@@ -1,5 +1,5 @@
 use crate::{
-    LedPin, OutputPin, PinConfiguration,
+    InputRegisters, LedPin, OutputPin, PinConfiguration,
     descriptor::{DescriptorExt, PinDescriptor, Port},
     operations::{
         GpioDirection, PinMode, Register, read_register, set_io_direction, set_pin_mode,
@@ -24,6 +24,12 @@ where
         Ok(Self { bus, pin })
     }
 
+    /// Read the input registers for the AW9523 that this pin is attached to.
+    pub async fn read_registers(&mut self) -> Result<InputRegisters, E> {
+        InputRegisters::read(&mut self.bus, self.pin.address()).await
+    }
+
+    /// Enables or disables interrupt for this pin.
     pub async fn set_interrupt(&mut self, enable: bool) -> Result<(), E> {
         let register = match self.pin.port() {
             Port::Port0 => Register::INT_P0,
@@ -58,6 +64,20 @@ where
 
     async fn try_into_led(self) -> Result<LedPin<I2C>, E> {
         LedPin::try_new(self.bus, self.pin).await
+    }
+}
+
+impl<I2C> DescriptorExt for InputPin<I2C> {
+    fn address(&self) -> crate::Address {
+        self.pin.address()
+    }
+
+    fn port(&self) -> Port {
+        self.pin.port()
+    }
+
+    fn pin(&self) -> crate::Pin {
+        self.pin.pin()
     }
 }
 

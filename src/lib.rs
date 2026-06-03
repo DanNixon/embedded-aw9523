@@ -10,6 +10,6 @@ mod pins;
 
 pub use aw9523::Aw9523;
 pub use descriptor::*;
-pub use input_registers::InputRegisters;
+pub use input_registers::*;
 pub use pin_driver::*;
 pub use pins::*;

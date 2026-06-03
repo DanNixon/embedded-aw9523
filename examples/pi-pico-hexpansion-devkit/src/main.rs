@@ -48,6 +48,7 @@ async fn main(spawner: Spawner) {
     pin_control.init().await.unwrap();
     let pins = pin_control.pins();
 
+    // Hexpansion port E
     let led_pins = PinsWithLeds {
         pin1: pins.port0_pin2.try_into_led().await.unwrap(),
         pin2: pins.port0_pin3.try_into_led().await.unwrap(),
@@ -56,7 +57,8 @@ async fn main(spawner: Spawner) {
         pin5: pins.port0_pin6.try_into_led().await.unwrap(),
     };
 
-    let switch_pins = PinsWithSwitches {
+    // Hexpansion port F
+    let switch_pins_1 = PinsWithSwitches {
         pin1: pins.port0_pin7.try_into_input().await.unwrap(),
         pin2: pins.port1_pin4.try_into_input().await.unwrap(),
         pin3: pins.port1_pin5.try_into_input().await.unwrap(),
@@ -64,8 +66,18 @@ async fn main(spawner: Spawner) {
         pin5: pins.port1_pin7.try_into_input().await.unwrap(),
     };
 
+    // Hexpansion port D
+    let switch_pins_2 = PinsWithSwitches {
+        pin1: pins.port1_pin0.try_into_input().await.unwrap(),
+        pin2: pins.port1_pin1.try_into_input().await.unwrap(),
+        pin3: pins.port1_pin2.try_into_input().await.unwrap(),
+        pin4: pins.port1_pin3.try_into_input().await.unwrap(),
+        pin5: pins.port0_pin0.try_into_input().await.unwrap(),
+    };
+
     spawner.spawn(ramp_leds(led_pins).unwrap());
-    spawner.spawn(echo_inputs(switch_pins).unwrap());
+    spawner.spawn(echo_inputs_slow(switch_pins_1).unwrap());
+    spawner.spawn(echo_inputs_fast(switch_pins_2).unwrap());
 }
 
 struct PinsWithLeds<I2C> {
@@ -121,8 +133,9 @@ async fn ramp<I2C: embedded_hal_async::i2c::I2c>(pin: &mut LedPin<I2C>) {
     }
 }
 
+/// This reads each pin in turn, which reaads the input registers 5 times.
 #[embassy_executor::task]
-async fn echo_inputs(
+async fn echo_inputs_slow(
     mut switch_pins: PinsWithSwitches<
         I2cDevice<
             'static,
@@ -132,11 +145,54 @@ async fn echo_inputs(
     >,
 ) -> ! {
     loop {
+        info!("Slow");
         info!("Pin 1 is {}", switch_pins.pin1.is_high().await.unwrap());
         info!("Pin 2 is {}", switch_pins.pin2.is_high().await.unwrap());
         info!("Pin 3 is {}", switch_pins.pin3.is_high().await.unwrap());
         info!("Pin 4 is {}", switch_pins.pin4.is_high().await.unwrap());
         info!("Pin 5 is {}", switch_pins.pin5.is_high().await.unwrap());
+
+        Timer::after_millis(500).await;
+    }
+}
+
+/// This reads the input registers once and queries the pin state for all 5 pins from that single request.
+/// `read_registers()` is just a convinience function that calls `InputRegisters::read()` with the bus and address of the pin.
+#[embassy_executor::task]
+async fn echo_inputs_fast(
+    mut switch_pins: PinsWithSwitches<
+        I2cDevice<
+            'static,
+            NoopRawMutex,
+            embassy_rp::i2c::I2c<'static, I2C1, embassy_rp::i2c::Async>,
+        >,
+    >,
+) -> ! {
+    loop {
+        let registers = switch_pins.pin1.read_registers().await.unwrap();
+
+        info!("Fast");
+        info!(
+            "Pin 1 is {}",
+            registers.pin_state(&switch_pins.pin1).unwrap()
+        );
+        info!(
+            "Pin 2 is {}",
+            registers.pin_state(&switch_pins.pin2).unwrap()
+        );
+        info!(
+            "Pin 3 is {}",
+            registers.pin_state(&switch_pins.pin3).unwrap()
+        );
+        info!(
+            "Pin 4 is {}",
+            registers.pin_state(&switch_pins.pin4).unwrap()
+        );
+        info!(
+            "Pin 5 is {}",
+            registers.pin_state(&switch_pins.pin5).unwrap()
+        );
+
         Timer::after_millis(500).await;
     }
 }
