@@ -1,3 +1,5 @@
+//! Async `embedded-hal`-like traits that are currently missing from `embedded-hal-async`.
+
 pub mod digital {
     use embedded_hal::digital::{ErrorType, PinState};
 

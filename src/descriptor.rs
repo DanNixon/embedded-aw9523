@@ -7,6 +7,7 @@ pub trait DescriptorExt {
     fn pin(&self) -> Pin;
 }
 
+/// The i2c addresses that an AW9523 can be configured to be at.
 #[derive(Format, Debug, Copy, Clone, PartialEq, Eq, TryFromPrimitive)]
 #[repr(u8)]
 pub enum Address {
@@ -17,11 +18,12 @@ pub enum Address {
 }
 
 impl Address {
-    pub fn address(&self) -> u8 {
+    pub(crate) fn address(&self) -> u8 {
         *self as u8
     }
 }
 
+/// Blocks of 8 pins.
 #[derive(Format, Debug, Copy, Clone, PartialEq, Eq, TryFromPrimitive)]
 #[repr(u8)]
 pub enum Port {
@@ -29,6 +31,7 @@ pub enum Port {
     Port1,
 }
 
+/// The pin in a port.
 #[derive(Format, Debug, Copy, Clone, PartialEq, Eq, TryFromPrimitive)]
 #[repr(u8)]
 pub enum Pin {
@@ -43,7 +46,7 @@ pub enum Pin {
 }
 
 impl Pin {
-    pub fn bit(&self) -> u8 {
+    pub(crate) fn bit(&self) -> u8 {
         *self as u8
     }
 }

@@ -1,5 +1,6 @@
 use crate::{Address, Pin, PinDescriptor, Port, UnconfiguredPin};
 
+/// All unconfigured pins for a single AW9523.
 pub struct Pins<I2C> {
     pub port0_pin0: UnconfiguredPin<I2C>,
     pub port0_pin1: UnconfiguredPin<I2C>,
