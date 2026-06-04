@@ -26,7 +26,7 @@ where
 
     /// Read the input registers for the AW9523 that this pin is attached to.
     pub async fn read_registers(&mut self) -> Result<InputRegisters, E> {
-        InputRegisters::read(&mut self.bus, self.pin.address()).await
+        InputRegisters::read(&mut self.bus, &[self.pin.address()]).await
     }
 
     /// Enables or disables interrupt for this pin.
