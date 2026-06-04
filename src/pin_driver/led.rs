@@ -1,17 +1,17 @@
 use crate::{
-    InputPin, OutputPin, PinConfiguration,
+    Input, Output, PinConfiguration,
     descriptor::{DescriptorExt, Pin, PinDescriptor, Port},
     operations::{PinMode, Register, set_pin_mode, write_register},
 };
 use defmt::debug;
 use embedded_hal::pwm::ErrorKind;
 
-pub struct LedPin<I2C> {
+pub struct Led<I2C> {
     bus: I2C,
     pin: PinDescriptor,
 }
 
-impl<I2C, E> LedPin<I2C>
+impl<I2C, E> Led<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
@@ -21,28 +21,28 @@ where
     }
 }
 
-impl<I2C, E> PinConfiguration<I2C, E> for LedPin<I2C>
+impl<I2C, E> PinConfiguration<I2C, E> for Led<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
-    async fn try_into_output(self) -> Result<OutputPin<I2C>, E> {
-        OutputPin::try_new(self.bus, self.pin).await
+    async fn try_into_output(self) -> Result<Output<I2C>, E> {
+        Output::try_new(self.bus, self.pin).await
     }
 
-    async fn try_into_input(self) -> Result<InputPin<I2C>, E> {
-        InputPin::try_new(self.bus, self.pin).await
+    async fn try_into_input(self) -> Result<Input<I2C>, E> {
+        Input::try_new(self.bus, self.pin).await
     }
 
-    async fn try_into_led(self) -> Result<LedPin<I2C>, E> {
-        LedPin::try_new(self.bus, self.pin).await
+    async fn try_into_led(self) -> Result<Led<I2C>, E> {
+        Led::try_new(self.bus, self.pin).await
     }
 }
 
-impl<I2C> embedded_hal::pwm::ErrorType for LedPin<I2C> {
+impl<I2C> embedded_hal::pwm::ErrorType for Led<I2C> {
     type Error = ErrorKind;
 }
 
-impl<I2C, E> embedded_hal::pwm::SetDutyCycle for LedPin<I2C>
+impl<I2C, E> embedded_hal::pwm::SetDutyCycle for Led<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
@@ -69,7 +69,7 @@ where
     }
 }
 
-impl<I2C, E> crate::async_traits::pwm::SetDutyCycle for LedPin<I2C>
+impl<I2C, E> crate::async_traits::pwm::SetDutyCycle for Led<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {

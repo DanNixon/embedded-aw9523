@@ -1,5 +1,5 @@
 use crate::{
-    InputRegisters, LedPin, OutputPin, PinConfiguration,
+    InputRegisters, Led, Output, PinConfiguration,
     descriptor::{DescriptorExt, PinDescriptor, Port},
     operations::{
         GpioDirection, PinMode, Register, read_register, set_io_direction, set_pin_mode,
@@ -9,12 +9,12 @@ use crate::{
 use defmt::debug;
 use embedded_hal::digital::ErrorKind;
 
-pub struct InputPin<I2C> {
+pub struct Input<I2C> {
     bus: I2C,
     pin: PinDescriptor,
 }
 
-impl<I2C, E> InputPin<I2C>
+impl<I2C, E> Input<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
@@ -50,24 +50,24 @@ where
     }
 }
 
-impl<I2C, E> PinConfiguration<I2C, E> for InputPin<I2C>
+impl<I2C, E> PinConfiguration<I2C, E> for Input<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
-    async fn try_into_output(self) -> Result<OutputPin<I2C>, E> {
-        OutputPin::try_new(self.bus, self.pin).await
+    async fn try_into_output(self) -> Result<Output<I2C>, E> {
+        Output::try_new(self.bus, self.pin).await
     }
 
-    async fn try_into_input(self) -> Result<InputPin<I2C>, E> {
-        InputPin::try_new(self.bus, self.pin).await
+    async fn try_into_input(self) -> Result<Input<I2C>, E> {
+        Input::try_new(self.bus, self.pin).await
     }
 
-    async fn try_into_led(self) -> Result<LedPin<I2C>, E> {
-        LedPin::try_new(self.bus, self.pin).await
+    async fn try_into_led(self) -> Result<Led<I2C>, E> {
+        Led::try_new(self.bus, self.pin).await
     }
 }
 
-impl<I2C> DescriptorExt for InputPin<I2C> {
+impl<I2C> DescriptorExt for Input<I2C> {
     fn address(&self) -> crate::Address {
         self.pin.address()
     }
@@ -81,11 +81,11 @@ impl<I2C> DescriptorExt for InputPin<I2C> {
     }
 }
 
-impl<I2C> embedded_hal::digital::ErrorType for InputPin<I2C> {
+impl<I2C> embedded_hal::digital::ErrorType for Input<I2C> {
     type Error = ErrorKind;
 }
 
-impl<I2C, E> embedded_hal::digital::InputPin for InputPin<I2C>
+impl<I2C, E> embedded_hal::digital::InputPin for Input<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
@@ -112,7 +112,7 @@ where
     }
 }
 
-impl<I2C, E> crate::async_traits::digital::InputPin for InputPin<I2C>
+impl<I2C, E> crate::async_traits::digital::InputPin for Input<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
