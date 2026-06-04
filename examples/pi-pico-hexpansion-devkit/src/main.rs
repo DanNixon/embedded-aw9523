@@ -9,7 +9,7 @@ use embassy_rp::peripherals::I2C1;
 use embassy_sync::{blocking_mutex::raw::NoopRawMutex, mutex::Mutex};
 use embassy_time::Timer;
 use embedded_aw9523::{
-    Address, Aw9523, LedPin, PinConfiguration,
+    Address, Aw9523, Input, Led, PinConfiguration,
     async_traits::{digital::InputPin, pwm::SetDutyCycle},
 };
 use embedded_hal_async::i2c::I2c;
@@ -81,19 +81,19 @@ async fn main(spawner: Spawner) {
 }
 
 struct PinsWithLeds<I2C> {
-    pin1: LedPin<I2C>,
-    pin2: LedPin<I2C>,
-    pin3: LedPin<I2C>,
-    pin4: LedPin<I2C>,
-    pin5: LedPin<I2C>,
+    pin1: Led<I2C>,
+    pin2: Led<I2C>,
+    pin3: Led<I2C>,
+    pin4: Led<I2C>,
+    pin5: Led<I2C>,
 }
 
 struct PinsWithSwitches<I2C> {
-    pin1: embedded_aw9523::InputPin<I2C>,
-    pin2: embedded_aw9523::InputPin<I2C>,
-    pin3: embedded_aw9523::InputPin<I2C>,
-    pin4: embedded_aw9523::InputPin<I2C>,
-    pin5: embedded_aw9523::InputPin<I2C>,
+    pin1: Input<I2C>,
+    pin2: Input<I2C>,
+    pin3: Input<I2C>,
+    pin4: Input<I2C>,
+    pin5: Input<I2C>,
 }
 
 #[embassy_executor::task]
@@ -121,7 +121,7 @@ async fn ramp_leds(
     }
 }
 
-async fn ramp<I2C: embedded_hal_async::i2c::I2c>(pin: &mut LedPin<I2C>) {
+async fn ramp<I2C: embedded_hal_async::i2c::I2c>(pin: &mut Led<I2C>) {
     for duty in 0u8..=100 {
         pin.set_duty_cycle_percent(duty).await.unwrap();
         Timer::after_millis(5).await;
