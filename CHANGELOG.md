@@ -7,6 +7,23 @@ and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0
 
 ## [Unreleased]
 
+## [0.2.0](https://github.com/DanNixon/embedded-aw9523/compare/v0.1.0...v0.2.0) - 2026-06-05
+
+### Added
+
+- [**breaking**] allow `InputRegisters` to work for all devices on a bus
+- [**breaking**] rename pin drivers
+- tidy up input registers functionality
+
+### Fixed
+
+- remove unused dependency lint
+- *(docs)* correct badge links
+
+### Other
+
+- *(docs)* add some basic extra docs
+
 ## [0.1.0](https://github.com/DanNixon/embedded-aw9523/releases/tag/v0.1.0) - 2026-06-03
 
 ### Added
