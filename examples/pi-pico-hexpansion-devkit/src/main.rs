@@ -44,7 +44,9 @@ async fn main(spawner: Spawner) {
     > = StaticCell::new();
     let bus = I2C_BUS.init(Mutex::new(bus));
 
-    let mut pin_control = Aw9523::new(I2cDevice::new(bus), Address::Addr58);
+    let mut pin_control = Aw9523::new(I2cDevice::new(bus), Address::Addr58)
+        .await
+        .unwrap();
     pin_control.init().await.unwrap();
     let pins = pin_control.pins();
 
