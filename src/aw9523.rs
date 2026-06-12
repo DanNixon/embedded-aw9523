@@ -15,9 +15,9 @@ impl<I2C, E> Aw9523<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E> + Clone,
 {
-    pub fn new(bus: I2C, address: Address) -> Self {
-        let pins = Some(Pins::new(bus.clone(), address));
-        Self { bus, address, pins }
+    pub async fn new(bus: I2C, address: Address) -> Result<Self, E> {
+        let pins = Some(Pins::new(bus.clone(), address).await?);
+        Ok(Self { bus, address, pins })
     }
 
     pub async fn init(&mut self) -> Result<(), E> {

@@ -15,7 +15,7 @@ impl<I2C, E> Led<I2C>
 where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
-    pub(crate) async fn try_new(mut bus: I2C, pin: PinDescriptor) -> Result<Self, E> {
+    pub(crate) async fn new(mut bus: I2C, pin: PinDescriptor) -> Result<Self, E> {
         set_pin_mode(&mut bus, &pin, PinMode::Led).await?;
         Ok(Self { bus, pin })
     }
@@ -26,15 +26,15 @@ where
     I2C: embedded_hal_async::i2c::I2c<Error = E>,
 {
     async fn try_into_output(self) -> Result<Output<I2C>, E> {
-        Output::try_new(self.bus, self.pin).await
+        Output::new(self.bus, self.pin).await
     }
 
     async fn try_into_input(self) -> Result<Input<I2C>, E> {
-        Input::try_new(self.bus, self.pin).await
+        Input::new(self.bus, self.pin).await
     }
 
     async fn try_into_led(self) -> Result<Led<I2C>, E> {
-        Led::try_new(self.bus, self.pin).await
+        Led::new(self.bus, self.pin).await
     }
 }
 

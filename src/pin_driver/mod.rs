@@ -1,12 +1,10 @@
 mod input;
 mod led;
 mod output;
-mod unconfigured;
 
 pub use input::Input;
 pub use led::Led;
 pub use output::Output;
-pub use unconfigured::UnconfiguredPin;
 
 #[allow(async_fn_in_trait)]
 pub trait PinConfiguration<I2C, E> {
